@@ -1,8 +1,0 @@
-[log]
-# log levels : NOTSET, DEBUG, INFO, WARNING, ERROR, CRITICAL
-level = "DEBUG"  
-format = "%(asctime)s %(module)s %(levelname)s %(message)s"
-filepath = "/app/log/app.log"
-
-[output]
-root_path = "/app/output"
