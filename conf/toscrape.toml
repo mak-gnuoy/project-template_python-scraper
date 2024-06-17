@@ -1,0 +1,11 @@
+[log]
+# log levels : NOTSET=0, DEBUG=10, INFO=20, WARNING=30, ERROR=40, CRITICAL=50
+level = 10
+format = "%(asctime)s %(module)s %(levelname)s %(message)s"
+filepath = "/app/log/toscape.log"
+
+[output]
+root_path = "/app/output"
+
+[toscape]
+index_url = "https://quotes.toscrape.com"
