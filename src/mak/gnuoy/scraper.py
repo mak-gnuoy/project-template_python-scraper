@@ -20,12 +20,15 @@ class ScrapyScraper(Scraper):
             'LOG_ENABLED': False
         }
         HTTPSpider.start_urls = [self._url]
-        HTTPSpider.callback_func= self.parse
+        HTTPSpider.callback= self.received
         process.crawl(HTTPSpider)
         process.start()
 
+    def request(self, url: str, meta: dict = None, callback = None):
+        yield HTTPSpider.request(url, meta, callback)
+
     @abstractmethod
-    def parse(self, request_url: str, response_status: int, response_headers: dict, response_body: str):
+    def received(self, request_url: str, response_status: int, response_headers: dict, response_body: str, client):
         pass
     
 class GitScraper(Scraper):
