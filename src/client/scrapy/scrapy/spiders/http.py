@@ -4,10 +4,11 @@ class HTTPSpider(scrapy.Spider):
     name = "http"
     callback = None
 
-    def request(self, url: str):
+    def request(self, url: str, meta: dict = None):
         yield scrapy.Request(
             url = url,
-            callback = self.parse
+            callback = self.parse,
+            meta = meta
         )
 
     def parse(self, response):
