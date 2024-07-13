@@ -28,7 +28,7 @@ class ScrapyScraper(Scraper):
         yield HTTPSpider.request(url, meta, callback)
 
     @abstractmethod
-    def received(self, request_url: str, response_status: int, response_headers: dict, response_body: str, client):
+    def received(self, request_url: str, request_meta: dict, response_status: int, response_headers: dict, response_body: str, client):
         pass
     
 class GitScraper(Scraper):

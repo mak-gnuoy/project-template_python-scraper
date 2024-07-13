@@ -12,4 +12,4 @@ class HTTPSpider(scrapy.Spider):
 
     def parse(self, response):
         if response.status == 200:        
-            return self.callback(response.url, response.status, response.headers, response.body, self)
+            return self.callback(response.url, response.meta, response.status, response.headers, response.body, self)

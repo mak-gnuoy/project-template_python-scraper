@@ -8,9 +8,10 @@ from mak.gnuoy.scraper import ScrapyScraper
 
 class ToScapeScraper(ScrapyScraper):
 
-    def received(self, request_url: str, response_status: int, response_headers: dict, response_body: str, client):
+    def received(self, request_url: str, request_meta: dict, response_status: int, response_headers: dict, response_body: str, client):
         self.logger.debug(f"name={self._name}")
         self.logger.debug(f"request_url={request_url}")
+        self.logger.debug(f"request_meta={request_meta}")
         self.logger.debug(f"response_status={response_status}")
         self.logger.debug(f"response_headers={response_headers}")
         self.logger.debug(f"response_body to 100 bytes={response_body.decode('utf-8')[:100]}")
