@@ -22,7 +22,7 @@ class ToScapeScraper(ScrapyScraper):
             parsed_url = urlparse(request_url)
             next_url= urlunparse(parsed_url._replace(path = href))
 
-            return client.request(url = next_url)
+            return client.request(url = next_url, headers = self._config[self._name]['headers'])
         except Exception as e:
             self.logger.debug(f"end of page : {request_url}\n{e}")
 

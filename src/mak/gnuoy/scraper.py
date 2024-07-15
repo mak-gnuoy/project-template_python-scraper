@@ -10,7 +10,7 @@ logging.getLogger('scrapy').propagate = False
 logging.getLogger().propagate = False
 
 class ScrapyScraper(Scraper):
-    def scrape(self, url: str = None):
+    def scrape(self, url: str = None, headers: dict = None):
         super().scrape(url)
 
         process = CrawlerProcess(get_project_settings() )
@@ -20,12 +20,13 @@ class ScrapyScraper(Scraper):
             'LOG_ENABLED': False
         }
         HTTPSpider.start_urls = [self._url]
+        HTTPSpider.headers = self._config[self._name]['headers']
         HTTPSpider.callback= self.received
         process.crawl(HTTPSpider)
         process.start()
 
-    def request(self, url: str, meta: dict = None, callback = None):
-        yield HTTPSpider.request(url, meta, callback)
+    def request(self, url: str, headers: dict = None, meta: dict = None):
+        yield HTTPSpider.request(url, headers, meta)
 
     @abstractmethod
     def received(self, request_url: str, request_meta: dict, response_status: int, response_headers: dict, response_body: str, client):
