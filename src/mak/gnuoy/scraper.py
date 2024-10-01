@@ -1,53 +1,57 @@
 from abc import abstractmethod
-import logging
+from typing import Any, Dict, List, Optional
+
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 
-from mak.gnuoy.impl.scrapy.scrapy.spiders.http import HTTPSpider
-from mak.gnuoy.framework import Config, Scraper
-
-logging.getLogger("scrapy").propagate = False
-logging.getLogger().propagate = False
+from mak.gnuoy.impl.scrapy.http import HTTPSpider
+from mak.gnuoy.framework import Base
 
 
-class ScrapyScraper(Scraper):
-    def scrape(self, url: str = None, headers: dict = None):  # type: ignore
-        super().scrape(url)
+class Scraper(Base):
+    def __init__(
+        self, config: Dict[str, Any], settings: Optional[Dict[str, Any]] = None
+    ):
+        super().__init__()
 
-        process = CrawlerProcess(get_project_settings())
-        HTTPSpider.custom_settings = {
-            "DOWNLOAD_DELAY": 1,
-            "RANDOMIZE_DOWNLOAD_DELAY": True,
-            "LOG_ENABLED": False,
-        }
-        HTTPSpider.start_urls = [self._url]  # type: ignore
-        HTTPSpider.headers = self._config[self._name]["headers"]
-        HTTPSpider.callback = self.received  # type: ignore
-        process.crawl(HTTPSpider)
-        process.start()
+        self._logger.info(f"settings={settings}")
+        self._logger.info(f"config={config}")
+        self._name = config["name"]
+        self._config = config
+        self._settings = settings
 
     @abstractmethod
-    def received(
-        self,
-        request_url: str,
-        request_meta: dict,
-        response_status: int,
-        response_headers: dict,
-        response_body: str,
-        client,
+    def scrape(
+        self, urls: Optional[List[str]] = None, headers: Optional[Dict[str, Any]] = None
     ):
         pass
 
 
-# class GitScraper(Scraper):
-#     def __init__(self, name: str, config: Config):
-#         super().__init__(name, config)
+class ScrapyScraper(Scraper):
+    def scrape(
+        self, urls: Optional[List[str]] = None, headers: Optional[Dict[str, Any]] = None
+    ):
+        if urls is None or len(urls) == 0:
+            urls = self._config["start_urls"]
+        if headers is None:
+            headers = self._config["headers"]
 
-#     def scrape(self, url: str = None):
-#         super().scrape(url)
+        process = CrawlerProcess(get_project_settings())
+        HTTPSpider.custom_settings = self._settings
+        HTTPSpider.start_urls = urls  # type: ignore
+        HTTPSpider.headers = headers
+        HTTPSpider.callback = self._received  # type: ignore
+        process.crawl(HTTPSpider)
+        process.start()
 
-#         self.parse(self._config[self._name]["index_url"])
+    def _received(
+        self,
+        response,
+        client,
+    ):
+        self.client = client
+        return self.received(response)
 
-#     @abstractmethod
-#     def parse(self, repo_url: str):
-#         pass
+    @abstractmethod
+    def received(self, response):
+        pass

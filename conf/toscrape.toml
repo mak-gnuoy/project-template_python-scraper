@@ -1,3 +1,10 @@
-[toscape]
+[settings]
+DOWNLOAD_DELAY = 1
+RANDOMIZE_DOWNLOAD_DELAY = true
+LOG_ENABLED = false
+REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
+
+[toscrape]
+name = "toscrape"
 headers.Accept = "text/html; charset=utf-8"
-index_url = "https://quotes.toscrape.com"
+start_urls = ["https://quotes.toscrape.com"]

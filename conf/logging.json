@@ -28,6 +28,14 @@
                 "file_handler"
             ],
             "propagate": false
+        },
+        "scrapy": {
+            "level": "DEBUG",
+            "handlers": [
+                "stream_handler",
+                "file_handler"
+            ],
+            "propagate": false
         }
     }
 }

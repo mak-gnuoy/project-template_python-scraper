@@ -4,7 +4,7 @@ import logging
 import logging.config
 import tomllib
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 with open("/app/conf/settings.toml", "rb") as f:
     settings = tomllib.load(f)
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class Config:
     @classmethod
-    def load(cls, path: str) -> dict:
+    def load(cls, path: str) -> Dict[str, Any]:
         with open(path, "rb") as f:
             return tomllib.load(f)
 
@@ -50,16 +50,3 @@ class Store(Base):
     @abstractmethod
     def get(self, *keys):
         pass
-
-class Scraper(Base):
-    def __init__(self, name: str, config: Dict[str, Any]):
-        super().__init__()
-
-        self._name = name
-        self._config = config
-
-    def scrape(self, url: str | None = None):
-        if url is None:
-            self._url = self._config[self._name]['index_url']
-        else:
-            self._url = url
