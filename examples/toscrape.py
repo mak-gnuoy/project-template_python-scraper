@@ -23,9 +23,7 @@ class ToScapeScraper(ScrapyScraper):
         self._logger.debug(f"request_meta={request_meta}")
         self._logger.debug(f"response_status={response_status}")
         self._logger.debug(f"response_headers={response_headers}")
-        self._logger.debug(
-            f"response_body to 100 bytes={response_body.decode('utf-8')[:100]}"
-        )
+        self._logger.debug(f"response_body to 100 bytes={response_body[:100]}")
 
         try:
             bs = BeautifulSoup(response_body, "html.parser")

@@ -11,7 +11,7 @@ logging.getLogger().propagate = False
 
 
 class ScrapyScraper(Scraper):
-    def scrape(self, url: str = None, headers: dict = None):
+    def scrape(self, url: str = None, headers: dict = None):  # type: ignore
         super().scrape(url)
 
         process = CrawlerProcess(get_project_settings())
@@ -20,14 +20,11 @@ class ScrapyScraper(Scraper):
             "RANDOMIZE_DOWNLOAD_DELAY": True,
             "LOG_ENABLED": False,
         }
-        HTTPSpider.start_urls = [self._url]
+        HTTPSpider.start_urls = [self._url]  # type: ignore
         HTTPSpider.headers = self._config[self._name]["headers"]
-        HTTPSpider.callback = self.received
+        HTTPSpider.callback = self.received  # type: ignore
         process.crawl(HTTPSpider)
         process.start()
-
-    def request(self, url: str, headers: dict = None, meta: dict = None):
-        yield HTTPSpider.request(url, headers, meta)
 
     @abstractmethod
     def received(
@@ -42,15 +39,15 @@ class ScrapyScraper(Scraper):
         pass
 
 
-class GitScraper(Scraper):
-    def __init__(self, name: str, config: Config):
-        super().__init__(name, config)
+# class GitScraper(Scraper):
+#     def __init__(self, name: str, config: Config):
+#         super().__init__(name, config)
 
-    def scrape(self, url: str = None):
-        super().scrape(url)
+#     def scrape(self, url: str = None):
+#         super().scrape(url)
 
-        self.parse(self._config[self._name]["index_url"])
+#         self.parse(self._config[self._name]["index_url"])
 
-    @abstractmethod
-    def parse(self, repo_url: str):
-        pass
+#     @abstractmethod
+#     def parse(self, repo_url: str):
+#         pass

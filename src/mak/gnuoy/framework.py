@@ -3,14 +3,16 @@ import json
 import logging
 import logging.config
 import tomllib
-from urllib.parse import urlparse
+from abc import ABC, abstractmethod
+from typing import Any, Dict
 
 with open("/app/conf/settings.toml", "rb") as f:
-    config = tomllib.load(f)
+    settings = tomllib.load(f)
 
-with open(config["log"]["config"]["filepath"], "rb") as f:
-    logging_config = json.load(f)
-    logging.config.dictConfig(logging_config)
+with open(settings["log"]["config"]["filepath"], "rb") as f:
+    logging.config.dictConfig(json.load(f))
+
+logger = logging.getLogger(__name__)
 
 
 class Config:
@@ -21,26 +23,25 @@ class Config:
 
 
 class Base(ABC):
-    def __init__(self, config: dict | None = None):
-        self._logger = logging.getLogger()
-        self._config = config
+    def __init__(self):
+        self._logger = logger
+
+
+class App(Base):
+    def __init__(self):
+        self.settings = settings
+        self.logger = logger
+
+        self.logger.info(
+            f"settings: {json.dumps(
+                self.settings, sort_keys=True, indent=4)}"
+        )
 
 
 class Store(Base):
     def __init__(self, url: str):
         super().__init__()
-
         self._url = url
-
-    @classmethod
-    def get_instance(cls, url: str):
-        parsed_url = urlparse(url)
-        if parsed_url.scheme.lower() == "file" or parsed_url.scheme.lower() == "":
-            from mak.gnuoy.store import FileStore
-
-            return FileStore.get_instance(url)
-        else:
-            raise Exception("Unsupported store type")
 
     @abstractmethod
     def set(self, **key_values):
@@ -51,26 +52,11 @@ class Store(Base):
         pass
 
 class Scraper(Base):
-    def __init__(self, name: str, config: Config):
-        super().__init__(config)
+    def __init__(self, name: str, config: Dict[str, Any]):
+        super().__init__()
 
         self._name = name
-        # self._config = config
-
-        # self._logger = logging.getLogger(__name__)
-        # self._logger.propagate = False
-        # self._logger.setLevel(self._config['log']['level'])
-
-        # file_hanlder = logging.handlers.RotatingFileHandler(
-        #             self._config['log']['filepath'],
-        #             maxBytes = 10485760,
-        #             backupCount =100)
-        # file_hanlder.setFormatter(logging.Formatter(self._config['log']['format']))
-        # self._logger.addHandler(file_hanlder)
-
-        # stream_handler = logging.StreamHandler()
-        # stream_handler.setFormatter(logging.Formatter(self._config['log']['format']))
-        # self._logger.addHandler(stream_handler)
+        self._config = config
 
     def scrape(self, url: str | None = None):
         if url is None:
