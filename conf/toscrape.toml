@@ -5,6 +5,5 @@ LOG_ENABLED = false
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 
 [toscrape]
-name = "toscrape"
 headers.Accept = "text/html; charset=utf-8"
 start_urls = ["https://quotes.toscrape.com"]
